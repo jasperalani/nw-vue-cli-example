@@ -1,50 +1,32 @@
 <template>
   <div id="app">
-    <img
-      src="@/assets/logo.png"
-      alt="Vue.js logo"
-      title="Vue.js"
-      class="logo"
-    />
-    <img
-      v-if="isDesktop"
-      src="@/assets/nw.png"
-      alt="NW.js logo"
-      title="NW.js"
-      class="logo"
-    />
-    <HelloWorld :msg="message" />
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </nav>
+    <router-view />
   </div>
 </template>
 
-<script>
-import HelloWorld from '@/components/HelloWorld.vue';
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  },
-  computed: {
-    message: function () {
-      if (this.isDesktop) {
-        return 'Welcome to your Vue.js Desktop App in NW.js!';
-      }
-      return 'Welcome to your Vue.js Web App!';
-    }
-  }
-};
-</script>
-
 <style>
 #app {
-  margin-top: 60px;
-  color: #2C3E50;
-  font-family: 'Avenir', sans-serif;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  color: #2c3e50;
 }
-.logo {
-  max-height: 140px;
-  margin: 0px 10px;
+
+nav {
+  padding: 30px;
+}
+
+nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
