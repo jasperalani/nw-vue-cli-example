@@ -1,45 +1,34 @@
 {
-  "ManifestComments": [
-    "Only add dependencies that you want shipped to the end user, for everything else, use devDependencies, including things that will be bundled by webpack.",
-    "NW.js requires a name and a main, everything else is optional.",
-    "The build section is used by nwjs-builder-phoenix, see its documentation for more info",
-    "To turn spell checking off, remove it from the chromium-args in this file"
-  ],
   "name": "nw-vue",
   "version": "1.10.0",
-  "main": "http://localhost:8964",
-  "node-remote": "http://localhost:8964",
-  "node-main": "",
-  "window": {
-    "width": 960,
-    "height": 600,
-    "min_width": 700,
-    "min_height": 500,
-    "icon": "src/assets/vue.png"
-  },
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run serve\" \"wait-on http://localhost:8964 && nw .\"",
     "serve": "vue-cli-service serve --port=8964",
     "build": "npm run build:clean && npm run build:vue && npm run build:nw",
-    "build:clean": "rimraf ./dist-vue ./dist",
-    "build:vue": "vue-cli-service build --modern --dest ./dist-vue",
-    "build:nw": "build --concurrent --tasks win-x86,linux-x86,linux-x64,mac-x64 --mirror https://dl.nwjs.io/ .",
-    "build:win": "npm run build:win:clean && npm run build:vue && build --tasks win-x86 --mirror https://dl.nwjs.io/ .",
-    "build:lin": "npm run build:lin:clean && npm run build:vue && build --tasks linux-x64 --mirror https://dl.nwjs.io/ .",
-    "build:win:clean": "rimraf ./dist-vue ./dist/nw-vue-1.10.0-win-x86 ./dist/nw-vue-1.10.0-win-x86.zip ./dist/nw-vue-1.10.0-win-x86.7z ./dist/nw-vue-1.10.0-win-x86-Setup.exe",
-    "build:lin:clean": "rimraf ./dist-vue ./dist/nw-vue-1.10.0-linux-x64 ./dist/nw-vue-1.10.0-linux-x64.zip",
-    "run:win": "dist\\nw-vue-1.10.0-win-x86\\nw-vue.exe",
-    "run:lin": "./dist/nw-vue-1.10.0-linux-x64/nw-vue",
-    "regression": "rd /s /q node_modules & rd /s /q node_modules & rd /s /q node_modules & npm install && npm run lint && npm test && npm run build:win && npm run run:win",
-    "lint": "vue-cli-service lint --no-fix --rulesdir=./node_modules/eslint-config-tjw-jest/custom-eslint-rules",
-    "fix": "vue-cli-service lint --fix --rulesdir=./node_modules/eslint-config-tjw-jest/custom-eslint-rules",
-    "test": "npm run test:unit",
-    "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "jest --config jest.config.js --coverage",
-    "validate": "npm run lint && npm run test:unit && npm run build:vue",
-    "update:vue-devtools": "rimraf ./node_modules/nw-vue-devtools-prebuilt && npm install"
+    "test:e2e": "vue-cli-service test:e2e",
+    "lint": "vue-cli-service lint --no-fix --rulesdir=./node_modules/eslint-config-tjw-jest/custom-eslint-rules",
+    "build:clean": "rimraf ./dist-vue ./dist",
+    "build:lin": "npm run build:lin:clean && npm run build:vue && build --tasks linux-x64 --mirror https://dl.nwjs.io/ .",
+    "build:lin:clean": "rimraf ./dist-vue ./dist/nw-vue-1.10.0-linux-x64 ./dist/nw-vue-1.10.0-linux-x64.zip",
+    "build:nw": "build --concurrent --tasks win-x86,linux-x86,linux-x64,mac-x64 --mirror https://dl.nwjs.io/ .",
+    "build:vue": "vue-cli-service build --modern --dest ./dist-vue",
+    "build:win": "npm run build:win:clean && npm run build:vue && build --tasks win-x86 --mirror https://dl.nwjs.io/ .",
+    "build:win:clean": "rimraf ./dist-vue ./dist/nw-vue-1.10.0-win-x86 ./dist/nw-vue-1.10.0-win-x86.zip ./dist/nw-vue-1.10.0-win-x86.7z ./dist/nw-vue-1.10.0-win-x86-Setup.exe",
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "fix": "vue-cli-service lint --fix --rulesdir=./node_modules/eslint-config-tjw-jest/custom-eslint-rules",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
+    "regression": "rd /s /q node_modules & rd /s /q node_modules & rd /s /q node_modules & npm install && npm run lint && npm test && npm run build:win && npm run run:win",
+    "run:lin": "./dist/nw-vue-1.10.0-linux-x64/nw-vue",
+    "run:win": "dist\\nw-vue-1.10.0-win-x86\\nw-vue.exe",
+    "start": "concurrently \"npm run serve\" \"wait-on http://localhost:8964 && nw .\"",
+    "test": "npm run test:unit",
+    "update:vue-devtools": "rimraf ./node_modules/nw-vue-devtools-prebuilt && npm install",
+    "validate": "npm run lint && npm run test:unit && npm run build:vue"
   },
+  "main": "background.js",
   "dependencies": {
     "express": "^4.17.3",
     "nw-electron-adapter": "^1.0.0"
@@ -55,6 +44,8 @@
     "@vue/vue2-jest": "^27.0.0-alpha.4",
     "concurrently": "^7.0.0",
     "core-js": "^3.21.1",
+    "electron": "^13.0.0",
+    "electron-devtools-installer": "^3.1.0",
     "eslint": "^8.12.0",
     "eslint-config-tjw-base": "^2.0.0",
     "eslint-config-tjw-import": "^1.0.0",
@@ -74,10 +65,16 @@
     "postcss-loader": "^6.2.1",
     "rimraf": "^3.0.2",
     "vue": "^2.6.14",
+    "vue-cli-plugin-electron-builder": "~2.1.1",
     "vue-template-compiler": "^2.6.14",
     "wait-on": "^6.0.1"
   },
-  "chromium-args": "--enable-spell-checking --load-extension='./node_modules/nw-vue-devtools-prebuilt/extension'",
+  "ManifestComments": [
+    "Only add dependencies that you want shipped to the end user, for everything else, use devDependencies, including things that will be bundled by webpack.",
+    "NW.js requires a name and a main, everything else is optional.",
+    "The build section is used by nwjs-builder-phoenix, see its documentation for more info",
+    "To turn spell checking off, remove it from the chromium-args in this file"
+  ],
   "build": {
     "nwVersion": "v0.62.2",
     "nwFlavor": "normal",
@@ -146,5 +143,15 @@
       "diffUpdaters": false,
       "hashCalculation": true
     }
+  },
+  "chromium-args": "--enable-spell-checking --load-extension='./node_modules/nw-vue-devtools-prebuilt/extension'",
+  "node-main": "",
+  "node-remote": "http://localhost:8964",
+  "window": {
+    "width": 960,
+    "height": 600,
+    "min_width": 700,
+    "min_height": 500,
+    "icon": "src/assets/vue.png"
   }
 }
